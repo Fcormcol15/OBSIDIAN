@@ -252,6 +252,36 @@ footer{
 /* REVEAL genérico */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity 1s ease,transform 1s ease}
 .reveal.on{opacity:1;transform:none}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  .nav{padding:20px 24px}
+  .nav-links{display:none}
+
+  .servicios{padding:80px 24px}
+  .sec-header{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:40px}
+  .sec-count{display:none}
+
+  .services-list{border-top:none;gap:12px}
+  .service-row{
+    display:flex;flex-direction:column;align-items:flex-start;
+    gap:10px;padding:24px 20px;
+    border:0.5px solid var(--border2);
+    border-bottom:0.5px solid var(--border2);
+  }
+  .service-row:hover{padding-left:20px}
+  .srv-tag{justify-self:unset;align-self:flex-start}
+  .srv-desc{font-size:12px;line-height:1.7}
+
+  .punch{padding:100px 24px}
+  .punch-final{padding:120px 24px}
+  .pf-actions{flex-direction:column;align-items:center}
+  .btn{width:100%;text-align:center}
+
+  .ticker{padding:0 24px;gap:12px;flex-wrap:wrap;justify-content:center}
+  .ticker-sep{display:none}
+  footer{padding:18px 24px;flex-direction:column;gap:8px;text-align:center}
+}
 </style>
 </head>
 <body>
