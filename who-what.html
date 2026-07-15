@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who & What We Protect — Obscural</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+@media (max-width: 900px) { html { scroll-behavior: auto; } }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #050505;
+  color: #fff;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+#dot {
+  position: fixed; width: 6px; height: 6px;
+  background: #fff; border-radius: 50%;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: difference;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
+  padding: 28px clamp(32px,6vw,96px);
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(5,5,5,0.9) 0%, transparent 100%);
+}
+.nav-logo { text-decoration: none; display: block; transition: opacity 0.3s; }
+.nav-logo:hover { opacity: 0.7; }
+.nav-logo svg { height: 17px; width: auto; display: block; }
+.nav-links { display: flex; gap: clamp(14px, 2.5vw, 32px); padding: 0; margin: 0; }
+.nav-links a {
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.28); text-decoration: none; transition: color 0.3s;
+  white-space: nowrap;
+}
+.nav-links a.active, .nav-links a:hover { color: rgba(255,255,255,0.75); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 clamp(32px,6vw,96px) clamp(64px,10vh,120px);
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+.hero-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 30%;
+  filter: brightness(0.58) saturate(0.9);
+}
+.hero-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to top,
+    rgba(5,5,5,0.95) 0%,
+    rgba(5,5,5,0.5) 40%,
+    rgba(5,5,5,0.1) 100%);
+}
+.hero-content { position: relative; z-index: 2; }
+.hero-tag {
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(255,255,255,0.2); margin-bottom: 32px;
+}
+.hero-display {
+  font-size: clamp(80px,17vw,230px);
+  font-weight: 700; line-height: 0.85; letter-spacing: -0.045em;
+  margin-bottom: 48px;
+}
+.hero-display .l1 { display: block; color: #fff; }
+.hero-display .l2 { display: block; color: rgba(255,255,255,0.12); }
+.hero-sub {
+  font-size: clamp(14px,1.5vw,19px); font-weight: 300;
+  color: rgba(255,255,255,0.32); line-height: 1.7;
+  max-width: 520px;
+  padding-left: 24px;
+  border-left: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── SECTION DIVIDER ── */
+.sec-divider {
+  width: 100%; height: 1px;
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── SECTION INTRO ── */
+.sec-intro {
+  padding: clamp(56px,8vh,100px) clamp(32px,6vw,96px) clamp(40px,5vh,64px);
+  display: flex; align-items: baseline; gap: 40px; flex-wrap: wrap;
+}
+.sec-intro-num {
+  font-size: clamp(64px,8vw,112px); font-weight: 700;
+  letter-spacing: -0.05em; color: rgba(255,255,255,0.05);
+  line-height: 1; flex-shrink: 0;
+}
+.sec-intro-text {}
+.sec-intro-label {
+  font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(255,255,255,0.2); margin-bottom: 16px;
+}
+.sec-intro-title {
+  font-size: clamp(28px,4vw,56px); font-weight: 600;
+  letter-spacing: -0.03em; color: rgba(255,255,255,0.82);
+  line-height: 1.1;
+}
+
+/* ── INTRO TEXT ── */
+.who-lead {
+  padding: 0 clamp(32px,6vw,96px) clamp(40px,6vh,80px);
+  max-width: 760px;
+  font-size: clamp(16px,1.8vw,24px); font-weight: 300;
+  color: rgba(255,255,255,0.4); line-height: 1.65;
+}
+
+/* ── PROFILE PANELS ── */
+.profile-panel {
+  display: flex;
+  min-height: 80vh;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.profile-panel.reverse { flex-direction: row-reverse; }
+
+.pp-photo {
+  flex: 0 0 58%;
+  position: relative; overflow: hidden;
+}
+.pp-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.55) saturate(0.9);
+  transition: filter 0.8s ease;
+  display: block;
+}
+.profile-panel:hover .pp-photo img { filter: brightness(0.65) saturate(1); }
+.pp-photo::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+/* gradient fades toward text panel */
+.profile-panel:not(.reverse) .pp-photo::after {
+  background: linear-gradient(to right, transparent 60%, rgba(5,5,5,0.85) 100%);
+}
+.profile-panel.reverse .pp-photo::after {
+  background: linear-gradient(to left, transparent 60%, rgba(5,5,5,0.85) 100%);
+}
+
+.pp-content {
+  flex: 0 0 42%;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(48px,8vh,120px) clamp(32px,4vw,72px);
+  background: #050505;
+  position: relative;
+}
+.pp-num {
+  font-size: clamp(80px,10vw,140px); font-weight: 700;
+  letter-spacing: -0.06em; line-height: 1;
+  color: rgba(255,255,255,0.03);
+  position: absolute; bottom: clamp(24px,4vh,48px);
+  right: clamp(24px,3vw,48px);
+  user-select: none; pointer-events: none;
+}
+.pp-type {
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(255,255,255,0.22); margin-bottom: 24px;
+  padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.pp-headline {
+  font-size: clamp(22px,2.8vw,40px); font-weight: 600;
+  letter-spacing: -0.03em; line-height: 1.2;
+  color: rgba(255,255,255,0.85); margin-bottom: 24px;
+}
+.pp-body {
+  font-size: clamp(13px,1.2vw,16px); font-weight: 300;
+  color: rgba(255,255,255,0.28); line-height: 1.85;
+}
+.pp-hints {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 9px; letter-spacing: 0.20em; text-transform: uppercase;
+  color: rgba(255,255,255,0.16); line-height: 2;
+  font-weight: 300;
+}
+
+/* ── EXPOSURE ── */
+#exposure {
+  background: #080808;
+  padding: clamp(80px,12vh,140px) clamp(32px,6vw,96px);
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+.exp-kicker {
+  font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(255,255,255,0.14); margin-bottom: 64px;
+}
+.exp-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; border: 1px solid rgba(255,255,255,0.04);
+  margin-bottom: 72px;
+}
+.exp-cell { padding: 52px 44px; background: rgba(255,255,255,0.01); }
+.exp-num {
+  font-size: clamp(52px,6vw,88px); font-weight: 200;
+  letter-spacing: -0.04em; color: rgba(255,255,255,0.8);
+  line-height: 1; margin-bottom: 20px;
+}
+.exp-desc { font-size: 13px; color: rgba(255,255,255,0.22); line-height: 1.85; font-weight: 300; }
+.exp-src { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255,255,255,0.07); font-family: 'Courier New', monospace; margin-top: 16px; }
+.exp-statement {
+  max-width: 820px;
+  font-size: clamp(24px,3.2vw,48px); font-weight: 200;
+  line-height: 1.35; color: rgba(255,255,255,0.48);
+  letter-spacing: -0.025em;
+}
+
+/* ── WHAT ── */
+#what-section {
+  background: #050505;
+  padding: clamp(80px,12vh,140px) clamp(32px,6vw,96px);
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+.what-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 72px; padding-bottom: 36px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 32px; flex-wrap: wrap;
+}
+.what-title {
+  font-size: clamp(36px,5.5vw,80px); font-weight: 700;
+  letter-spacing: -0.04em; color: rgba(255,255,255,0.85); line-height: 1;
+}
+.what-meta { font-size: 12px; color: rgba(255,255,255,0.16); line-height: 1.8; max-width: 280px; text-align: right; }
+.what-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; border: 1px solid rgba(255,255,255,0.04);
+}
+.what-cell {
+  padding: 48px 40px; background: #050505;
+  position: relative; overflow: hidden; transition: background 0.5s;
+}
+.what-cell:hover { background: rgba(255,255,255,0.018); }
+.what-accent {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 1px; background: rgba(255,255,255,0);
+  transition: background 0.5s;
+}
+.what-cell:hover .what-accent { background: rgba(255,255,255,0.18); }
+.what-n { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.1); margin-bottom: 32px; }
+.what-name { font-size: clamp(18px,2vw,25px); font-weight: 400;
+  color: rgba(255,255,255,0.76); margin-bottom: 16px; line-height: 1.2; }
+.what-risk { font-size: 12px; color: rgba(255,255,255,0.2); line-height: 1.9; font-weight: 300; }
+.what-bar { margin-top: 36px; height: 1px; background: rgba(255,255,255,0.04); position: relative; overflow: hidden; }
+.what-bar-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: rgba(255,255,255,0.28);
+  width: 0; transition: width 1.4s cubic-bezier(.16,1,.3,1);
+}
+.what-cell.in .what-bar-fill { width: var(--risk,70%); }
+
+/* ── CTA ── */
+#cta {
+  padding: clamp(80px,12vh,140px) clamp(32px,6vw,96px);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 40px; flex-wrap: wrap;
+}
+.cta-text { font-size: clamp(28px,4.5vw,64px); font-weight: 200;
+  letter-spacing: -0.03em; line-height: 1.15; color: rgba(255,255,255,0.55); }
+.cta-text strong { color: #fff; font-weight: 600; }
+.cta-links { display: flex; flex-direction: column; gap: 12px; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32); text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 16px 28px; transition: all 0.4s; white-space: nowrap;
+}
+.cta-btn:hover { color: #fff; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.03); }
+
+/* ── FOOTER ── */
+footer {
+  padding: 32px clamp(32px,6vw,96px);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ft { font-size: 10px; color: rgba(255,255,255,0.1); letter-spacing: 0.1em; }
+.ft a { color: rgba(255,255,255,0.2); text-decoration: none; transition: color 0.3s; }
+.ft a:hover { color: rgba(255,255,255,0.6); }
+
+/* ── REVEALS ── */
+.r-fade { opacity: 0; transform: translateY(24px); transition: opacity 1s ease, transform 1s ease; }
+.r-fade.in { opacity: 1; transform: none; }
+.d1 { transition-delay: 0.1s; } .d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.32s; } .d4 { transition-delay: 0.44s; }
+
+/* ── PAGE TRANSITION VEIL ── */
+#page-veil { position:fixed; inset:0; z-index:99999; background:#000; opacity:1; transition:opacity .55s ease; pointer-events:none; }
+#page-veil.out { opacity:0; }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  nav { padding: 20px 24px; }
+  .nav-links { gap: 20px; }
+  .nav-links a { font-size: 9px; letter-spacing: 0.14em; }
+  .profile-panel, .profile-panel.reverse { flex-direction: column; }
+  .pp-photo { flex: none; height: 55vw; min-height: 280px; }
+  .pp-photo::after { display: none; }
+  .pp-content { flex: none; padding: 36px 28px; }
+  .pp-num { display: none; }
+  .exp-grid { grid-template-columns: 1fr; }
+  .exp-cell { padding: 36px 24px; }
+  .what-grid { grid-template-columns: 1fr; }
+  .what-cell { padding: 28px 20px; }
+  .what-header, #cta { flex-direction: column; }
+  .what-meta { text-align: left; max-width: 100%; }
+  #cta { padding: 60px 28px; }
+  footer { flex-direction: column; gap: 8px; padding: 20px 24px; font-size: 10px; }
+}
+
+/* ── NAV SQUEEZE (≤700px) ── */
+@media (max-width: 700px) {
+  .nav-links a[href="who-what.html"] { font-size: 0; }
+  .nav-links a[href="who-what.html"]::before {
+    content: "Who"; font-size: 10px; letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.75); /* active en who-what page */
+    text-transform: uppercase;
+  }
+}
+
+/* ── MOBILE S (≤480px) ── */
+@media (max-width: 480px) {
+  nav { padding: 16px 18px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 8px; letter-spacing: 0.10em; }
+  .nav-links a[href="who-what.html"]::before { font-size: 8px; letter-spacing: 0.10em; }
+  .hero-display { font-size: clamp(44px, 13vw, 72px); }
+  .hero-tag { margin-bottom: 20px; }
+  .hero-sub { font-size: 13px; padding-left: 16px; }
+  .sec-intro { padding: 44px 20px 32px; }
+  .pp-photo { height: 65vw; }
+  .pp-content { padding: 28px 20px; }
+  .pp-headline { font-size: clamp(22px, 7vw, 36px); }
+  .exp-cell { padding: 28px 20px; }
+  .what-cell { padding: 22px 16px; }
+  #cta { padding: 52px 20px; }
+  footer { padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div id="page-veil"></div>
+
+<div id="dot"></div>
+
+<nav>
+  <a href="obscural.html?skip" class="nav-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -2 273.62 51.37">
+      <path fill="#fff" d="M32.04,11.63h-14.59C7.81,11.63,0,19.45,0,29.09s7.81,17.45,17.45,17.45h14.59c9.64,0,17.45-7.81,17.45-17.45s-7.81-17.45-17.45-17.45ZM17.45,40.81c-6.46,0-11.72-5.26-11.72-11.72s5.26-11.72,11.72-11.72h5.92c-3.59,2.66-5.92,6.91-5.92,11.72s2.34,9.06,5.93,11.72h-5.92Z"/>
+      <path fill="#fff" d="M120.46,30.62c-.43-.65-.89-1.23-1.35-1.74-.47-.51-1.07-.97-1.81-1.37-.74-.4-1.39-.74-1.96-1.02-.57-.28-1.3-.55-2.21-.8-.9-.26-1.62-.45-2.16-.57-.54-.12-1.25-.28-2.14-.48-.87-.2-1.55-.36-2.04-.47-.49-.11-1.04-.27-1.65-.49-.61-.21-1.08-.42-1.39-.62-.31-.2-.58-.46-.8-.77-.22-.31-.33-.66-.33-1.04,0-.85.45-1.48,1.35-1.89.9-.41,2.07-.62,3.49-.62,2.92,0,5.88,1.03,8.89,3.08l4.68-6.45c-4.15-3.05-8.78-4.58-13.91-4.58-2.72,0-5.16.4-7.31,1.2-2.15.8-3.89,2.07-5.21,3.8-1.33,1.73-1.99,3.81-1.99,6.24,0,.89.1,1.73.28,2.51.19.78.42,1.47.69,2.06.27.59.65,1.15,1.15,1.69.5.53.97.99,1.4,1.35.43.37,1.01.72,1.72,1.07.71.35,1.31.62,1.81.82.49.2,1.15.42,1.97.65.82.23,1.47.41,1.92.52.46.11,1.1.26,1.92.43,1.11.27,1.96.48,2.52.63.57.16,1.19.38,1.86.65.67.28,1.14.6,1.42.95.28.36.42.77.42,1.24,0,.89-.51,1.58-1.52,2.07-1.02.49-2.36.74-4.03.74-3.7,0-7.03-1.26-10-3.78l-4.65,6.45c4.28,3.52,9.27,5.28,14.98,5.28,4.41,0,8.05-1.03,10.91-3.09,2.86-2.06,4.3-4.94,4.3-8.64,0-1-.1-1.93-.3-2.77-.2-.85-.52-1.59-.95-2.24Z"/>
+      <path fill="#fff" d="M142.94,20.46c1.6,0,3.06.39,4.38,1.17,1.31.78,2.34,1.83,3.07,3.14l8.69-5.28c-1.63-2.7-3.85-4.82-6.69-6.37-2.83-1.55-5.98-2.32-9.46-2.32-5.37,0-9.86,1.75-13.46,5.25-3.6,3.5-5.4,7.85-5.4,13.04s1.8,9.54,5.4,13.04c3.6,3.5,8.08,5.25,13.46,5.25,3.48,0,6.63-.77,9.46-2.32,2.83-1.55,5.06-3.68,6.69-6.4l-8.69-5.25c-.74,1.31-1.76,2.36-3.07,3.14-1.32.78-2.78,1.17-4.38,1.17-2.45,0-4.49-.82-6.12-2.47-1.63-1.65-2.44-3.7-2.44-6.15s.81-4.5,2.44-6.15c1.63-1.65,3.67-2.47,6.12-2.47Z"/>
+      <path fill="#fff" d="M184.49,31.19c0,1.96-.59,3.54-1.77,4.73-1.18,1.19-2.75,1.79-4.71,1.79s-3.54-.6-4.73-1.79c-1.19-1.19-1.79-2.77-1.79-4.73V11.63h-10v20.93c0,4.46,1.51,8.04,4.53,10.75,3.02,2.71,7.02,4.06,11.99,4.06s8.99-1.35,11.98-4.06c3-2.71,4.5-6.29,4.5-10.75V11.63h-10v19.56Z"/>
+      <path fill="#fff" d="M209.28,15.58v-3.95h-10v34.9h10v-16.28c0-2.74.82-4.91,2.46-6.52,1.64-1.6,3.96-2.41,6.97-2.41h1.5v-10.26h-1.5c-3.7,0-6.84,1.5-9.43,4.51Z"/>
+      <rect fill="#fff" x="263.62" width="10" height="46.54"/>
+      <path fill="#fff" d="M72.75,10.8c-3.6,0-6.94,1.12-9.74,3.04V0h-10v46.54h10v-2.21c2.79,1.92,6.14,3.04,9.74,3.04,9.75,0,17.65-8.19,17.65-18.29s-7.9-18.29-17.65-18.29ZM71.71,37.78c-4.8,0-8.69-3.89-8.69-8.69s3.89-8.69,8.69-8.69,8.69,3.89,8.69,8.69-3.89,8.69-8.69,8.69Z"/>
+      <path fill="#fff" d="M248.83,13.86c-2.8-1.93-6.16-3.06-9.77-3.06-9.75,0-17.65,8.19-17.65,18.29s7.9,18.29,17.65,18.29c3.61,0,6.97-1.13,9.77-3.06v2.23h10V11.63h-10v2.23ZM240.4,37.78c-4.8,0-8.69-3.89-8.69-8.69s3.89-8.69,8.69-8.69,8.69,3.89,8.69,8.69-3.89,8.69-8.69,8.69Z"/>
+    </svg>
+  </a>
+  <div class="nav-links">
+    <a href="obscural.html?skip">Home</a>
+    <a href="who-what.html" class="active">Who We Protect</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="obscural.html?skip#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg">
+    <img src="img_pool.png" alt="">
+  </div>
+  <div class="hero-content">
+    <p class="hero-tag r-fade">Obscural — Client Profile</p>
+    <div class="hero-display">
+      <span class="l1 r-fade d1">Who.</span>
+      <span class="l2 r-fade d2">What.</span>
+    </div>
+    <p class="hero-sub r-fade d3">The individuals we protect, and everything they stand to lose.</p>
+  </div>
+</section>
+
+<!-- ── WHO INTRO ── -->
+<div class="sec-intro r-fade">
+  <span class="sec-intro-num">01</span>
+  <div class="sec-intro-text">
+    <p class="sec-intro-label">Who We Protect</p>
+    <h2 class="sec-intro-title">A carefully selected group.<br>A very real exposure.</h2>
+  </div>
+</div>
+<p class="who-lead r-fade">We work with individuals for whom digital exposure is not a theoretical risk — it is a daily reality. Each profile below represents a category of client. The circumstances change. The vulnerability doesn't.</p>
+
+<!-- ── PROFILE 01: EXECUTIVE ── -->
+<div class="profile-panel r-fade">
+  <div class="pp-photo">
+    <img src="img_jet.png" alt="" style="object-position: center 20%;">
+  </div>
+  <div class="pp-content">
+    <span class="pp-num">01</span>
+    <p class="pp-type">The Executive</p>
+    <h3 class="pp-headline">Decisions move markets.<br>Exposure moves faster.</h3>
+    <p class="pp-body">She runs across time zones, governed by a calendar that maps every meeting, movement, and conversation. Her devices carry corporate intelligence. Her digital shadow is longer than she knows — and more valuable than she imagines.</p>
+    <p class="pp-hints">Endpoint hardening &nbsp;·&nbsp; Credential leak detection &nbsp;·&nbsp; Intercepted communications &nbsp;·&nbsp; Hostile campaign detection</p>
+  </div>
+</div>
+
+<!-- ── PROFILE 02: ARTIST ── -->
+<div class="profile-panel reverse r-fade">
+  <div class="pp-photo">
+    <img src="img_concert.png" alt="" style="object-position: 40% center;">
+  </div>
+  <div class="pp-content">
+    <span class="pp-num">02</span>
+    <p class="pp-type">The Artist</p>
+    <h3 class="pp-headline">Identity is the asset.<br>Visibility is the risk.</h3>
+    <p class="pp-body">Thousands of lights. Every phone a camera, every stream a live feed. His identity is his most valuable asset — and it's broadcasted from every angle, every night, with or without his consent.</p>
+    <p class="pp-hints">Fake profile detection &nbsp;·&nbsp; Deepfake detection &nbsp;·&nbsp; Dark web monitoring &nbsp;·&nbsp; Reputation monitoring</p>
+  </div>
+</div>
+
+<!-- ── PROFILE 03: FAMILY ── -->
+<div class="profile-panel r-fade">
+  <div class="pp-photo">
+    <img src="img_family.png" alt="" style="object-position: center 30%;">
+  </div>
+  <div class="pp-content">
+    <span class="pp-num">03</span>
+    <p class="pp-type">The Family</p>
+    <h3 class="pp-headline">Built to last.<br>If protected.</h3>
+    <p class="pp-body">They built something worth protecting — a home, a name, a future. But the networks inside their walls are open doors to anyone paying attention. The family that built generational wealth cannot afford to leave a single door unlocked.</p>
+    <p class="pp-hints">Home network audit &nbsp;·&nbsp; Smart home protection &nbsp;·&nbsp; Staff access control &nbsp;·&nbsp; IoT device security</p>
+  </div>
+</div>
+
+<!-- ── PROFILE 04: PUBLIC FIGURE ── -->
+<div class="profile-panel reverse r-fade">
+  <div class="pp-photo">
+    <img src="img_public.png" alt="" style="object-position: center 20%;">
+  </div>
+  <div class="pp-content">
+    <span class="pp-num">04</span>
+    <p class="pp-type">The Public Figure</p>
+    <h3 class="pp-headline">Permanent scrutiny.<br>Zero privacy by default.</h3>
+    <p class="pp-body">He lives under permanent observation. Every entrance documented. Every exit analyzed. The cameras never stop. Neither do the threats — and neither does Obscural.</p>
+    <p class="pp-hints">Covert listening sweep &nbsp;·&nbsp; Location security &nbsp;·&nbsp; Physical surveillance detection &nbsp;·&nbsp; Reputational attack response</p>
+  </div>
+</div>
+
+<!-- ── EXPOSURE ── -->
+<section id="exposure">
+  <p class="exp-kicker r-fade">The Threat Landscape</p>
+  <div class="exp-grid">
+    <div class="exp-cell r-fade d1">
+      <p class="exp-num">12×</p>
+      <p class="exp-desc">High-net-worth individuals are 12 times more likely to be targeted by advanced cyber threats than the general public.</p>
+      <p class="exp-src">Verizon DBIR 2024</p>
+    </div>
+    <div class="exp-cell r-fade d2">
+      <p class="exp-num">$4.88M</p>
+      <p class="exp-desc">Average cost of a personal data breach — not including reputational damage, legal exposure, or extortion demands.</p>
+      <p class="exp-src">IBM Cost of a Data Breach 2024</p>
+    </div>
+    <div class="exp-cell r-fade d3">
+      <p class="exp-num">68%</p>
+      <p class="exp-desc">Of attacks on high-profile individuals involve social engineering — not technical exploits. The human layer is always the weakest.</p>
+      <p class="exp-src">CISA Advisory 2024</p>
+    </div>
+  </div>
+  <p class="exp-statement r-fade">Privacy is not a feature you enable.<br>It is an architecture you build before it's needed.</p>
+</section>
+
+<!-- ── WHAT ── -->
+<section id="what-section">
+  <div class="what-header">
+    <h2 class="what-title r-fade">02 —<br>What We<br>Protect</h2>
+    <p class="what-meta r-fade d1">Six critical domains.<br>Each a potential vector.<br>None left unguarded.</p>
+  </div>
+  <div class="what-grid">
+    <div class="what-cell r-fade" style="--risk:85%">
+      <div class="what-accent"></div>
+      <p class="what-n">01</p>
+      <h3 class="what-name">Your Devices</h3>
+      <p class="what-risk">Phones, laptops, tablets. Everything you are lives inside them. Unprotected, they are an open window into your entire life.</p>
+      <div class="what-bar"><div class="what-bar-fill"></div></div>
+    </div>
+    <div class="what-cell r-fade d1" style="--risk:72%">
+      <div class="what-accent"></div>
+      <p class="what-n">02</p>
+      <h3 class="what-name">Your Home, Office &amp; Studio</h3>
+      <p class="what-risk">Four walls are only as safe as the network inside them. Smart devices and guest Wi-Fi multiply your exposure silently.</p>
+      <div class="what-bar"><div class="what-bar-fill"></div></div>
+    </div>
+    <div class="what-cell r-fade d2" style="--risk:91%">
+      <div class="what-accent"></div>
+      <p class="what-n">03</p>
+      <h3 class="what-name">Your Digital Identity</h3>
+      <p class="what-risk">Someone is always looking. Your presence online is a map that leads directly to you — your family, your assets, your movements.</p>
+      <div class="what-bar"><div class="what-bar-fill"></div></div>
+    </div>
+    <div class="what-cell r-fade d1" style="--risk:78%">
+      <div class="what-accent"></div>
+      <p class="what-n">04</p>
+      <h3 class="what-name">Your Reputation</h3>
+      <p class="what-risk">Years to build. Hours to destroy. Reputational attacks are the fastest-growing threat to executives and public figures globally.</p>
+      <div class="what-bar"><div class="what-bar-fill"></div></div>
+    </div>
+    <div class="what-cell r-fade d2" style="--risk:88%">
+      <div class="what-accent"></div>
+      <p class="what-n">05</p>
+      <h3 class="what-name">Your Communications</h3>
+      <p class="what-risk">Privacy is not paranoia — it is a right. Every message, call, and thread is a potential liability if left unprotected.</p>
+      <div class="what-bar"><div class="what-bar-fill"></div></div>
+    </div>
+    <div class="what-cell r-fade d3" style="--risk:94%">
+      <div class="what-accent"></div>
+      <p class="what-n">06</p>
+      <h3 class="what-name">Your Family</h3>
+      <p class="what-risk">Exposure doesn't choose who it hurts. Those closest to you are often the most exposed — and the most effective attack vector.</p>
+      <div class="what-bar"><div class="what-bar-fill"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta">
+  <p class="cta-text r-fade">Ready to close<br><strong>every open door.</strong></p>
+  <div class="cta-links">
+    <a href="solutions.html" class="cta-btn r-fade d1">View Our Solutions →</a>
+    <a href="obscural.html?skip#contact" class="cta-btn r-fade d2">Request a Consultation →</a>
+  </div>
+</section>
+
+<footer>
+  <span class="ft"><a href="obscural.html">← Obscural</a></span>
+  <span class="ft">© 2026 Obscural. All rights reserved.</span>
+</footer>
+
+<script>
+const dot = document.getElementById('dot');
+document.addEventListener('mousemove', e => {
+  dot.style.left = e.clientX + 'px';
+  dot.style.top  = e.clientY + 'px';
+});
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.r-fade, .what-cell').forEach(el => obs.observe(el));
+
+setTimeout(() => {
+  document.querySelectorAll('#hero .r-fade').forEach(el => el.classList.add('in'));
+}, 120);
+</script>
+<script>
+  (function(){
+    const veil = document.getElementById('page-veil');
+    requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('out')));
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || href.startsWith('mailto:') || href.startsWith('javascript:') || href.startsWith('#') || /^https?:/.test(href)) return;
+      e.preventDefault();
+      veil.classList.remove('out');
+      setTimeout(() => { location.href = href; }, 520);
+    });
+  })();
+</script>
+</body>
+</html>

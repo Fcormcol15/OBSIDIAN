@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solutions — Obscural</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+@media (max-width: 900px) { html { scroll-behavior: auto; } }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #050505;
+  color: #fff;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ── */
+#dot {
+  position: fixed; width: 6px; height: 6px;
+  background: #fff; border-radius: 50%;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: difference;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
+  padding: 28px clamp(32px,6vw,96px);
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(5,5,5,0.95) 0%, transparent 100%);
+}
+.nav-logo { text-decoration: none; display: block; transition: opacity 0.3s; }
+.nav-logo:hover { opacity: 0.7; }
+.nav-logo svg { height: 17px; width: auto; display: block; }
+.nav-links { display: flex; gap: clamp(14px, 2.5vw, 32px); align-items: center; padding: 0; margin: 0; }
+.nav-links a {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(255,255,255,0.28);
+  white-space: nowrap;
+  text-decoration: none; transition: color 0.3s;
+}
+.nav-links a.active, .nav-links a:hover { color: rgba(255,255,255,0.75); }
+
+/* ── HERO ── */
+#hero-sol {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 clamp(32px,6vw,96px) clamp(72px,10vh,140px);
+  position: relative;
+  overflow: hidden;
+  background: #050505;
+}
+.hero-sol-bg { position: absolute; inset: 0; z-index: 0; }
+.hero-sol-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 40%;
+  filter: brightness(0.52) saturate(0.8);
+}
+.hero-sol-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to top,
+    rgba(5,5,5,0.97) 0%,
+    rgba(5,5,5,0.55) 45%,
+    rgba(5,5,5,0.1) 100%);
+}
+#hero-sol > *:not(.hero-sol-bg) { position: relative; z-index: 2; }
+.hero-tag {
+  font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(255,255,255,0.16); margin-bottom: 40px;
+}
+.hero-headline {
+  font-size: clamp(56px,10vw,148px);
+  font-weight: 700; line-height: 0.88; letter-spacing: -0.04em;
+  color: #fff; margin-bottom: 40px;
+}
+.hero-headline em {
+  display: block;
+  color: rgba(255,255,255,0.1);
+  font-style: normal;
+}
+.hero-rule { width:100%; height:1px; background:rgba(255,255,255,0.05); margin:40px 0; }
+.hero-sub {
+  font-size: clamp(13px,1.4vw,18px); font-weight: 300;
+  color: rgba(255,255,255,0.3); max-width: 520px; line-height: 1.75;
+}
+/* Service quick-nav */
+.hero-services {
+  position: absolute; bottom: clamp(40px,7vh,80px);
+  right: clamp(32px,6vw,96px);
+  display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
+}
+.hero-svc-link {
+  font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.18); text-decoration: none;
+  transition: color 0.3s; display: flex; align-items: center; gap: 8px;
+}
+.hero-svc-link::before {
+  content: '';
+  display: block; width: 16px; height: 1px;
+  background: rgba(255,255,255,0.12);
+  transition: width 0.3s, background 0.3s;
+}
+.hero-svc-link:hover { color: rgba(255,255,255,0.7); }
+.hero-svc-link:hover::before { width: 32px; background: rgba(255,255,255,0.4); }
+
+/* ── SHARED SERVICE SECTION ── */
+.svc {
+  min-height: 100vh;
+  display: flex; position: relative; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+/* Odd: content left, visual right */
+.svc:nth-child(odd) .svc-content { order: 1; }
+.svc:nth-child(odd) .svc-visual  { order: 2; }
+/* Even: visual left, content right */
+.svc:nth-child(even) .svc-content { order: 2; }
+.svc:nth-child(even) .svc-visual  { order: 1; }
+
+.svc-content {
+  flex: 0 0 50%;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(80px,12vh,160px) clamp(32px,5vw,80px);
+  position: relative; z-index: 2;
+}
+.svc-visual {
+  flex: 0 0 50%;
+  position: relative; overflow: hidden;
+}
+
+.svc-num {
+  font-size: clamp(80px,10vw,140px); font-weight: 700;
+  letter-spacing: -0.06em; line-height: 1;
+  color: rgba(255,255,255,0.04);
+  position: absolute; top: clamp(40px,6vh,80px);
+  right: clamp(32px,5vw,80px);
+  pointer-events: none;
+  user-select: none;
+}
+.svc-badge {
+  display: inline-flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+}
+.svc-badge-n {
+  font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(255,255,255,0.16);
+}
+.svc-badge-sep { width: 20px; height: 1px; background: rgba(255,255,255,0.1); }
+.svc-badge-tag {
+  font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.24);
+}
+.svc-name {
+  font-size: clamp(44px,6vw,88px); font-weight: 700;
+  letter-spacing: -0.04em; line-height: 1;
+  color: #fff; margin-bottom: 32px;
+}
+.svc-desc {
+  font-size: clamp(14px,1.5vw,19px); font-weight: 300;
+  color: rgba(255,255,255,0.45); line-height: 1.75;
+  max-width: 480px; margin-bottom: 48px;
+}
+.svc-features {
+  display: flex; flex-direction: column;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.svc-feat {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 13px; color: rgba(255,255,255,0.28);
+  line-height: 1.6; font-weight: 300;
+  position: relative; overflow: hidden;
+  transition: color 0.5s ease, border-color 0.5s ease;
+
+  /* scroll-in: empieza invisible y bajada */
+  opacity: 0; transform: translateY(8px);
+  transition: color 0.5s ease,
+              opacity 0.5s ease,
+              transform 0.5s ease;
+}
+.svc-feat.in {
+  opacity: 1; transform: none;
+}
+
+/* sweep de luz horizontal en hover */
+.svc-feat::after {
+  content: '';
+  position: absolute; left: -100%; top: 0; bottom: 0;
+  width: 60%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  transition: left 0.7s ease;
+  pointer-events: none;
+}
+.svc-feat:hover::after { left: 140%; }
+.svc-feat:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.08); }
+
+.svc-feat-dot {
+  flex-shrink: 0; margin-top: 7px;
+  width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: background 0.4s, box-shadow 0.4s;
+}
+.svc-feat:hover .svc-feat-dot {
+  background: rgba(255,255,255,0.7);
+  box-shadow: 0 0 6px rgba(255,255,255,0.35);
+}
+
+/* ── 01 VEIL ── */
+#veil { background: #050505; }
+#veil .svc-visual {
+  background: #080808;
+  display: flex; align-items: center; justify-content: center;
+}
+.veil-graphic {
+  position: relative; width: 260px; height: 260px;
+}
+.veil-core {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+}
+.veil-core::before {
+  content: '';
+  position: absolute; inset: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.veil-core::after {
+  content: '';
+  position: absolute; inset: 60px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+@keyframes veil-rotate {
+  to { transform: rotate(360deg); }
+}
+.veil-orbit {
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-top-color: rgba(255,255,255,0.18);
+  animation: veil-rotate 8s linear infinite;
+}
+.veil-orbit-2 {
+  position: absolute; inset: 28px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-bottom-color: rgba(255,255,255,0.1);
+  animation: veil-rotate 12s linear infinite reverse;
+}
+.veil-center-text {
+  position: relative; z-index: 2;
+  font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); text-align: center; line-height: 2;
+}
+/* Device dots around orbit */
+.veil-dot {
+  position: absolute;
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+}
+.veil-dot:nth-child(1) { top: -2px; left: 50%; transform: translateX(-50%); }
+.veil-dot:nth-child(2) { bottom: -2px; left: 50%; transform: translateX(-50%); }
+.veil-dot:nth-child(3) { left: -2px; top: 50%; transform: translateY(-50%); }
+.veil-dot:nth-child(4) { right: -2px; top: 50%; transform: translateY(-50%); }
+
+/* ── 02 PULSE ── */
+#pulse { background: #030303; }
+#pulse .svc-visual {
+  background: #030303;
+  position: relative; overflow: hidden;
+}
+.pulse-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.pulse-feed {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 48px;
+  gap: 0;
+}
+.feed-item {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: center; gap: 16px;
+  animation: feed-appear 0.6s ease both;
+}
+@keyframes feed-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.feed-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.feed-dot.alert  { background: rgba(255,80,80,0.7); box-shadow: 0 0 8px rgba(255,80,80,0.4); }
+.feed-dot.warn   { background: rgba(255,180,40,0.7); box-shadow: 0 0 8px rgba(255,180,40,0.3); }
+.feed-dot.ok     { background: rgba(80,200,120,0.7); box-shadow: 0 0 8px rgba(80,200,120,0.3); }
+.feed-dot.info   { background: rgba(120,160,255,0.7); box-shadow: 0 0 8px rgba(120,160,255,0.3); }
+.feed-text {
+  font-family: 'Courier New', monospace;
+  font-size: 10px; color: rgba(255,255,255,0.28); letter-spacing: 0.04em;
+}
+.feed-time {
+  margin-left: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 9px; color: rgba(255,255,255,0.1); letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.feed-item:nth-child(1) { animation-delay: 0.1s; }
+.feed-item:nth-child(2) { animation-delay: 0.25s; }
+.feed-item:nth-child(3) { animation-delay: 0.4s; }
+.feed-item:nth-child(4) { animation-delay: 0.55s; }
+.feed-item:nth-child(5) { animation-delay: 0.7s; }
+.feed-item:nth-child(6) { animation-delay: 0.85s; }
+.feed-item:nth-child(7) { animation-delay: 1.0s; }
+
+/* ── 03 SANCTUM ── */
+#sanctum { background: #050505; }
+#sanctum .svc-visual { background: #000; }
+.sanctum-photo {
+  position: absolute; inset: 0;
+}
+.sanctum-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 40%;
+  filter: brightness(0.3) saturate(0.8);
+}
+.sanctum-photo::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to right,
+    rgba(5,5,5,0.7) 0%, transparent 60%);
+}
+/* Annotation overlay */
+.sanctum-annotations {
+  position: absolute; inset: 0;
+  pointer-events: none;
+}
+.sanctum-annotations svg {
+  width: 100%; height: 100%;
+  position: absolute; inset: 0;
+}
+.ann-group {
+  opacity: 0;
+  animation: ann-in 0.6s ease both;
+}
+@keyframes ann-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.ann-group:nth-child(1)  { animation-delay: 0.3s; }
+.ann-group:nth-child(2)  { animation-delay: 0.8s; }
+.ann-group:nth-child(3)  { animation-delay: 1.3s; }
+.ann-group:nth-child(4)  { animation-delay: 1.8s; }
+.ann-group:nth-child(5)  { animation-delay: 2.3s; }
+.ann-group:nth-child(6)  { animation-delay: 2.8s; }
+.ann-group:nth-child(7)  { animation-delay: 3.3s; }
+.ann-circle {
+  fill: none;
+  stroke: rgba(255,255,255,0.5);
+  stroke-width: 0.8;
+}
+.ann-dot { fill: rgba(255,255,255,0.8); }
+.ann-line {
+  stroke: rgba(255,255,255,0.25);
+  stroke-width: 0.5;
+  stroke-dasharray: 2 2;
+}
+.ann-text {
+  fill: rgba(255,255,255,0.55);
+  font-family: 'Outfit', sans-serif;
+  font-size: 7px; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+/* ── 04 PHANTOM ── */
+#phantom { background: #020202; }
+#phantom .svc-visual {
+  background: #020202;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.phantom-bg {
+  position: absolute; inset: 0;
+}
+.phantom-bg img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center 40%;
+  filter: brightness(0.55) saturate(0.6) contrast(1.1);
+}
+.phantom-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%,
+    transparent 0%, rgba(2,2,2,0.85) 100%);
+}
+.phantom-glyph {
+  position: relative; z-index: 2;
+  text-align: center;
+}
+.phantom-eye {
+  font-size: clamp(80px,12vw,160px);
+  line-height: 1; color: rgba(255,255,255,0.04);
+  letter-spacing: -0.06em; font-weight: 700;
+  user-select: none;
+}
+.phantom-sub-glyph {
+  font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(255,255,255,0.12); margin-top: 16px;
+}
+
+/* ── CTA ── */
+#sol-cta {
+  padding: clamp(80px,12vh,160px) clamp(32px,6vw,96px);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 32px; flex-wrap: wrap;
+}
+.cta-headline {
+  font-size: clamp(32px,5vw,72px); font-weight: 200;
+  letter-spacing: -0.03em; line-height: 1.2;
+  color: rgba(255,255,255,0.55); max-width: 600px;
+}
+.cta-headline strong { color: #fff; font-weight: 600; }
+.cta-actions { display: flex; flex-direction: column; gap: 12px; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(255,255,255,0.35); text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 16px 28px; transition: all 0.4s;
+}
+.cta-btn:hover {
+  color: #fff; border-color: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.03);
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 32px clamp(32px,6vw,96px);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ft { font-size: 10px; color: rgba(255,255,255,0.1); letter-spacing: 0.1em; }
+.ft a { color: rgba(255,255,255,0.2); text-decoration: none; transition: color 0.3s; }
+.ft a:hover { color: rgba(255,255,255,0.6); }
+
+/* ── REVEAL ── */
+.r-fade { opacity: 0; transform: translateY(28px); transition: opacity 1s ease, transform 1s ease; }
+.r-fade.in { opacity: 1; transform: none; }
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.35s; }
+
+/* ── PAGE TRANSITION VEIL ── */
+#page-veil { position:fixed; inset:0; z-index:99999; background:#000; opacity:1; transition:opacity .55s ease; pointer-events:none; }
+#page-veil.out { opacity:0; }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  nav { padding: 20px 24px; }
+  .nav-links { gap: 20px; }
+  .nav-links a { font-size: 9px; letter-spacing: 0.14em; }
+  .hero-headline { font-size: clamp(44px, 10vw, 80px); }
+  .hero-services { position: relative; bottom: auto; right: auto;
+    flex-direction: row; flex-wrap: wrap; justify-content: flex-start;
+    margin-top: 40px; gap: 16px 24px; }
+  .svc { flex-direction: column; }
+  .svc-content, .svc-visual { flex: none; width: 100%; }
+  .svc-visual { min-height: 300px; }
+  /* Sanctum: más alto + ocultar anotaciones en mobile */
+  #sanctum .svc-visual { min-height: 420px; }
+  .sanctum-annotations { display: none; }
+  .sanctum-photo img { filter: brightness(0.45) saturate(0.8); }
+  .svc-content { padding: clamp(48px,8vh,80px) clamp(24px,5vw,56px); }
+  .svc-num { font-size: clamp(56px, 14vw, 100px); top: 20px; right: 20px; }
+  .svc-name { font-size: clamp(36px, 9vw, 60px); }
+  .svc:nth-child(odd) .svc-content,
+  .svc:nth-child(odd) .svc-visual,
+  .svc:nth-child(even) .svc-content,
+  .svc:nth-child(even) .svc-visual { order: unset; }
+  #sol-cta { flex-direction: column; padding: 60px 28px; }
+  footer { flex-direction: column; gap: 8px; padding: 20px 24px; font-size: 10px; }
+}
+
+/* ── NAV SQUEEZE (≤700px) ── */
+@media (max-width: 700px) {
+  .nav-links a[href="who-what.html"] { font-size: 0; }
+  .nav-links a[href="who-what.html"]::before {
+    content: "Who"; font-size: 10px; letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.26);
+    text-transform: uppercase;
+  }
+}
+
+/* ── MOBILE S (≤480px) ── */
+@media (max-width: 480px) {
+  nav { padding: 16px 18px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 8px; letter-spacing: 0.10em; }
+  .nav-links a[href="who-what.html"]::before { font-size: 8px; letter-spacing: 0.10em; }
+  .hero-headline { font-size: clamp(38px, 11vw, 56px); }
+  .hero-tag { margin-bottom: 20px; }
+  .hero-sub { font-size: 13px; }
+  .hero-services { margin-top: 28px; gap: 12px 18px; }
+  .hero-svc-link { font-size: 8px; }
+  .svc-content { padding: 40px 20px; }
+  .svc-visual { min-height: 240px; }
+  .svc-num { font-size: clamp(48px, 13vw, 80px); }
+  .svc-name { font-size: clamp(32px, 9vw, 52px); margin-bottom: 20px; }
+  .svc-desc { font-size: 13px; }
+  .svc-features { margin-top: 20px; }
+  #sol-cta { padding: 52px 20px; }
+  footer { padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div id="page-veil"></div>
+
+<div id="dot"></div>
+
+<nav>
+  <a href="obscural.html?skip" class="nav-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -2 273.62 51.37">
+      <path fill="#fff" d="M32.04,11.63h-14.59C7.81,11.63,0,19.45,0,29.09s7.81,17.45,17.45,17.45h14.59c9.64,0,17.45-7.81,17.45-17.45s-7.81-17.45-17.45-17.45ZM17.45,40.81c-6.46,0-11.72-5.26-11.72-11.72s5.26-11.72,11.72-11.72h5.92c-3.59,2.66-5.92,6.91-5.92,11.72s2.34,9.06,5.93,11.72h-5.92Z"/>
+      <path fill="#fff" d="M120.46,30.62c-.43-.65-.89-1.23-1.35-1.74-.47-.51-1.07-.97-1.81-1.37-.74-.4-1.39-.74-1.96-1.02-.57-.28-1.3-.55-2.21-.8-.9-.26-1.62-.45-2.16-.57-.54-.12-1.25-.28-2.14-.48-.87-.2-1.55-.36-2.04-.47-.49-.11-1.04-.27-1.65-.49-.61-.21-1.08-.42-1.39-.62-.31-.2-.58-.46-.8-.77-.22-.31-.33-.66-.33-1.04,0-.85.45-1.48,1.35-1.89.9-.41,2.07-.62,3.49-.62,2.92,0,5.88,1.03,8.89,3.08l4.68-6.45c-4.15-3.05-8.78-4.58-13.91-4.58-2.72,0-5.16.4-7.31,1.2-2.15.8-3.89,2.07-5.21,3.8-1.33,1.73-1.99,3.81-1.99,6.24,0,.89.1,1.73.28,2.51.19.78.42,1.47.69,2.06.27.59.65,1.15,1.15,1.69.5.53.97.99,1.4,1.35.43.37,1.01.72,1.72,1.07.71.35,1.31.62,1.81.82.49.2,1.15.42,1.97.65.82.23,1.47.41,1.92.52.46.11,1.1.26,1.92.43,1.11.27,1.96.48,2.52.63.57.16,1.19.38,1.86.65.67.28,1.14.6,1.42.95.28.36.42.77.42,1.24,0,.89-.51,1.58-1.52,2.07-1.02.49-2.36.74-4.03.74-3.7,0-7.03-1.26-10-3.78l-4.65,6.45c4.28,3.52,9.27,5.28,14.98,5.28,4.41,0,8.05-1.03,10.91-3.09,2.86-2.06,4.3-4.94,4.3-8.64,0-1-.1-1.93-.3-2.77-.2-.85-.52-1.59-.95-2.24Z"/>
+      <path fill="#fff" d="M142.94,20.46c1.6,0,3.06.39,4.38,1.17,1.31.78,2.34,1.83,3.07,3.14l8.69-5.28c-1.63-2.7-3.85-4.82-6.69-6.37-2.83-1.55-5.98-2.32-9.46-2.32-5.37,0-9.86,1.75-13.46,5.25-3.6,3.5-5.4,7.85-5.4,13.04s1.8,9.54,5.4,13.04c3.6,3.5,8.08,5.25,13.46,5.25,3.48,0,6.63-.77,9.46-2.32,2.83-1.55,5.06-3.68,6.69-6.4l-8.69-5.25c-.74,1.31-1.76,2.36-3.07,3.14-1.32.78-2.78,1.17-4.38,1.17-2.45,0-4.49-.82-6.12-2.47-1.63-1.65-2.44-3.7-2.44-6.15s.81-4.5,2.44-6.15c1.63-1.65,3.67-2.47,6.12-2.47Z"/>
+      <path fill="#fff" d="M184.49,31.19c0,1.96-.59,3.54-1.77,4.73-1.18,1.19-2.75,1.79-4.71,1.79s-3.54-.6-4.73-1.79c-1.19-1.19-1.79-2.77-1.79-4.73V11.63h-10v20.93c0,4.46,1.51,8.04,4.53,10.75,3.02,2.71,7.02,4.06,11.99,4.06s8.99-1.35,11.98-4.06c3-2.71,4.5-6.29,4.5-10.75V11.63h-10v19.56Z"/>
+      <path fill="#fff" d="M209.28,15.58v-3.95h-10v34.9h10v-16.28c0-2.74.82-4.91,2.46-6.52,1.64-1.6,3.96-2.41,6.97-2.41h1.5v-10.26h-1.5c-3.7,0-6.84,1.5-9.43,4.51Z"/>
+      <rect fill="#fff" x="263.62" width="10" height="46.54"/>
+      <path fill="#fff" d="M72.75,10.8c-3.6,0-6.94,1.12-9.74,3.04V0h-10v46.54h10v-2.21c2.79,1.92,6.14,3.04,9.74,3.04,9.75,0,17.65-8.19,17.65-18.29s-7.9-18.29-17.65-18.29ZM71.71,37.78c-4.8,0-8.69-3.89-8.69-8.69s3.89-8.69,8.69-8.69,8.69,3.89,8.69,8.69-3.89,8.69-8.69,8.69Z"/>
+      <path fill="#fff" d="M248.83,13.86c-2.8-1.93-6.16-3.06-9.77-3.06-9.75,0-17.65,8.19-17.65,18.29s7.9,18.29,17.65,18.29c3.61,0,6.97-1.13,9.77-3.06v2.23h10V11.63h-10v2.23ZM240.4,37.78c-4.8,0-8.69-3.89-8.69-8.69s3.89-8.69,8.69-8.69,8.69,3.89,8.69,8.69-3.89,8.69-8.69,8.69Z"/>
+    </svg>
+  </a>
+  <div class="nav-links">
+    <a href="obscural.html?skip">Home</a>
+    <a href="who-what.html">Who We Protect</a>
+    <a href="solutions.html" class="active">Solutions</a>
+    <a href="obscural.html?skip#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero-sol">
+  <div class="hero-sol-bg">
+    <img src="sol_hero_b.png" alt="">
+  </div>
+  <p class="hero-tag r-fade">Obscural — Solutions</p>
+  <h1 class="hero-headline">
+    <span class="r-fade d1">Four solutions.</span>
+    <em class="r-fade d2">Zero exposure.</em>
+  </h1>
+  <div class="hero-rule r-fade d3"></div>
+  <p class="hero-sub r-fade d3">Each solution is purpose-built for a specific threat surface. Together, they form a complete architecture of protection.</p>
+  <div class="hero-services">
+    <a href="#veil" class="hero-svc-link">01 Veil</a>
+    <a href="#pulse" class="hero-svc-link">02 Pulse</a>
+    <a href="#sanctum" class="hero-svc-link">03 Sanctum</a>
+    <a href="#phantom" class="hero-svc-link">04 Phantom</a>
+  </div>
+</section>
+
+<!-- ── 01 VEIL ── -->
+<section class="svc" id="veil">
+  <div class="svc-content">
+    <span class="svc-num r-fade">01</span>
+    <div class="svc-badge r-fade">
+      <span class="svc-badge-n">01</span>
+      <span class="svc-badge-sep"></span>
+      <span class="svc-badge-tag">Personal Device Protection</span>
+    </div>
+    <h2 class="svc-name r-fade d1">Veil</h2>
+    <p class="svc-desc r-fade d2">Active, continuous protection of every device you own. Phones, laptops, tablets — wherever you work, travel, or live, Veil is watching so you don't have to.</p>
+    <div class="svc-features r-fade d3">
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Zero-day threat detection across all personal devices</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>End-to-end encrypted communication infrastructure</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Remote wipe and emergency lockdown capability</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Travel security protocols and briefing</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>24/7 device health monitoring and response</div>
+    </div>
+  </div>
+  <div class="svc-visual">
+    <div class="veil-graphic" style="margin: auto; position: relative;">
+      <div class="veil-orbit"></div>
+      <div class="veil-orbit-2"></div>
+      <div class="veil-core">
+        <p class="veil-center-text">Active<br>Protection</p>
+      </div>
+      <span class="veil-dot"></span>
+      <span class="veil-dot"></span>
+      <span class="veil-dot"></span>
+      <span class="veil-dot"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 PULSE ── -->
+<section class="svc" id="pulse">
+  <div class="svc-content">
+    <span class="svc-num r-fade">02</span>
+    <div class="svc-badge r-fade">
+      <span class="svc-badge-n">02</span>
+      <span class="svc-badge-sep"></span>
+      <span class="svc-badge-tag">Digital Intelligence</span>
+    </div>
+    <h2 class="svc-name r-fade d1">Pulse</h2>
+    <p class="svc-desc r-fade d2">Continuous intelligence monitoring across the open web, deep web, and dark web. We know who's watching — before they move.</p>
+    <div class="svc-features r-fade d3">
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Real-time alerts when your data surfaces online</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Dark web credential and identity leak scanning</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Social media exposure and impersonation detection</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Threat actor profiling and pattern analysis</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Weekly intelligence briefings, always in plain language</div>
+    </div>
+  </div>
+  <div class="svc-visual">
+    <div class="pulse-grid"></div>
+    <div class="pulse-feed">
+      <div class="feed-item"><span class="feed-dot alert"></span><span class="feed-text">CREDENTIAL EXPOSED — dark web forum</span><span class="feed-time">00:03</span></div>
+      <div class="feed-item"><span class="feed-dot warn"></span><span class="feed-text">NEW MENTION — social platform scrape</span><span class="feed-time">01:17</span></div>
+      <div class="feed-item"><span class="feed-dot ok"></span><span class="feed-text">SCAN COMPLETE — surface web clear</span><span class="feed-time">02:44</span></div>
+      <div class="feed-item"><span class="feed-dot info"></span><span class="feed-text">INTEL UPDATE — threat actor inactive</span><span class="feed-time">04:08</span></div>
+      <div class="feed-item"><span class="feed-dot warn"></span><span class="feed-text">IP PROBE — unknown origin detected</span><span class="feed-time">05:51</span></div>
+      <div class="feed-item"><span class="feed-dot ok"></span><span class="feed-text">IDENTITY SCAN — no new exposure</span><span class="feed-time">07:22</span></div>
+      <div class="feed-item"><span class="feed-dot info"></span><span class="feed-text">BRIEFING READY — weekly report</span><span class="feed-time">08:00</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 SANCTUM ── -->
+<section class="svc" id="sanctum">
+  <div class="svc-content">
+    <span class="svc-num r-fade">03</span>
+    <div class="svc-badge r-fade">
+      <span class="svc-badge-n">03</span>
+      <span class="svc-badge-sep"></span>
+      <span class="svc-badge-tag">Home & Office Infrastructure</span>
+    </div>
+    <h2 class="svc-name r-fade d1">Sanctum</h2>
+    <p class="svc-desc r-fade d2">Cybersecurity architecture for your home, private office, or studio. Every connected device, every network entry point — hardened, audited, and made invisible.</p>
+    <div class="svc-features r-fade d3">
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Full network architecture audit and redesign</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Smart device isolation and access control</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Guest network and perimeter segmentation</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Physical security consultation</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>On-site installation, configuration, and training</div>
+    </div>
+  </div>
+  <div class="svc-visual">
+    <div class="sanctum-photo">
+      <img src="img3.png" alt="">
+    </div>
+    <!-- Annotation SVG overlay -->
+    <div class="sanctum-annotations">
+      <svg viewBox="0 0 500 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <!-- Wi-Fi -->
+        <g class="ann-group">
+          <line class="ann-line" x1="250" y1="80" x2="310" y2="130"/>
+          <circle class="ann-circle" cx="250" cy="80" r="10"/>
+          <circle class="ann-dot" cx="250" cy="80" r="2"/>
+          <text class="ann-text" x="222" y="65">Wi-Fi Network</text>
+        </g>
+        <!-- Security Cameras -->
+        <g class="ann-group">
+          <line class="ann-line" x1="100" y1="160" x2="180" y2="200"/>
+          <circle class="ann-circle" cx="100" cy="160" r="10"/>
+          <circle class="ann-dot" cx="100" cy="160" r="2"/>
+          <text class="ann-text" x="44" y="148">Security Cameras</text>
+        </g>
+        <!-- Smart Locks -->
+        <g class="ann-group">
+          <line class="ann-line" x1="90" y1="340" x2="180" y2="310"/>
+          <circle class="ann-circle" cx="90" cy="340" r="10"/>
+          <circle class="ann-dot" cx="90" cy="340" r="2"/>
+          <text class="ann-text" x="40" y="332">Smart Locks</text>
+        </g>
+        <!-- Router / Firewall -->
+        <g class="ann-group">
+          <line class="ann-line" x1="250" y1="490" x2="280" y2="440"/>
+          <circle class="ann-circle" cx="250" cy="490" r="10"/>
+          <circle class="ann-dot" cx="250" cy="490" r="2"/>
+          <text class="ann-text" x="212" y="512">Router / Firewall</text>
+        </g>
+        <!-- NAS / Server -->
+        <g class="ann-group">
+          <line class="ann-line" x1="375" y1="480" x2="340" y2="440"/>
+          <circle class="ann-circle" cx="375" cy="480" r="10"/>
+          <circle class="ann-dot" cx="375" cy="480" r="2"/>
+          <text class="ann-text" x="352" y="500">NAS / Home Server</text>
+        </g>
+        <!-- Smart TVs -->
+        <g class="ann-group">
+          <line class="ann-line" x1="150" y1="490" x2="200" y2="440"/>
+          <circle class="ann-circle" cx="150" cy="490" r="10"/>
+          <circle class="ann-dot" cx="150" cy="490" r="2"/>
+          <text class="ann-text" x="122" y="510">Smart TVs</text>
+        </g>
+        <!-- Voice Assistants -->
+        <g class="ann-group">
+          <line class="ann-line" x1="420" y1="320" x2="370" y2="300"/>
+          <circle class="ann-circle" cx="420" cy="320" r="10"/>
+          <circle class="ann-dot" cx="420" cy="320" r="2"/>
+          <text class="ann-text" x="398" y="340">Voice Assistants</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 PHANTOM ── -->
+<section class="svc" id="phantom">
+  <div class="svc-content">
+    <span class="svc-num r-fade">04</span>
+    <div class="svc-badge r-fade">
+      <span class="svc-badge-n">04</span>
+      <span class="svc-badge-sep"></span>
+      <span class="svc-badge-tag">Privacy & Counter-Surveillance</span>
+    </div>
+    <h2 class="svc-name r-fade d1">Phantom</h2>
+    <p class="svc-desc r-fade d2">Advanced counter-surveillance, anti-espionage, and reputational response. For when the threat is specific, personal, and urgent — and the window for action is narrow.</p>
+    <div class="svc-features r-fade d3">
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Technical surveillance countermeasures (TSCM / bug sweeps)</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Digital footprint reduction and exposure elimination</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Secure and private communication channel setup</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Reputational threat analysis and rapid response</div>
+      <div class="svc-feat"><span class="svc-feat-dot"></span>Legal threat coordination and documentation</div>
+    </div>
+  </div>
+  <div class="svc-visual">
+    <div class="phantom-bg">
+      <img src="ph_new2.png" alt="">
+    </div>
+    <div class="phantom-glyph">
+      <p class="phantom-eye">⌀</p>
+      <p class="phantom-sub-glyph">No trace. No signal.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="sol-cta">
+  <p class="cta-headline r-fade">Every door closed.<br><strong>One conversation away.</strong></p>
+  <div class="cta-actions">
+    <a href="who-what.html" class="cta-btn r-fade d1">Our Clients →</a>
+    <a href="obscural.html#contact" class="cta-btn r-fade d2">Request Consultation →</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <span class="ft"><a href="obscural.html">← Obscural</a></span>
+  <span class="ft">© 2026 Obscural. All rights reserved.</span>
+</footer>
+
+<script>
+/* cursor */
+const dot = document.getElementById('dot');
+document.addEventListener('mousemove', e => {
+  dot.style.left = e.clientX + 'px';
+  dot.style.top  = e.clientY + 'px';
+});
+
+/* scroll reveal */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.r-fade').forEach(el => obs.observe(el));
+
+/* ── FEAT ROWS: entrada escalonada ── */
+const featObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const feats = e.target.querySelectorAll('.svc-feat');
+      feats.forEach((f, i) => {
+        setTimeout(() => f.classList.add('in'), i * 80);
+      });
+      featObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.svc-features').forEach(el => featObs.observe(el));
+
+/* hero on load */
+setTimeout(() => {
+  document.querySelectorAll('#hero-sol .r-fade').forEach(el => el.classList.add('in'));
+}, 120);
+
+/* active nav highlight on scroll */
+const sections = document.querySelectorAll('.svc');
+const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+const scrollSpy = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.5 });
+sections.forEach(s => scrollSpy.observe(s));
+</script>
+<script>
+  (function(){
+    const veil = document.getElementById('page-veil');
+    requestAnimationFrame(() => requestAnimationFrame(() => veil.classList.add('out')));
+    document.addEventListener('click', function(e){
+      const a = e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || href.startsWith('mailto:') || href.startsWith('javascript:') || href.startsWith('#') || /^https?:/.test(href)) return;
+      e.preventDefault();
+      veil.classList.remove('out');
+      setTimeout(() => { location.href = href; }, 520);
+    });
+  })();
+</script>
+</body>
+</html>
